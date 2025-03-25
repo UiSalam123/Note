@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Note Taker with Cards</title>
     <style>
+        /* Same CSS as before */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -158,7 +159,6 @@
         <div class="notes-grid" id="notesContainer"></div>
     </div>
 
-    <!-- Modal for full note view -->
     <div class="modal" id="noteModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal()">&times;</span>
@@ -172,39 +172,43 @@
     <script>
         let currentNoteId = null;
 
-        document.addEventListener('DOMContentLoaded', loadNotes);
+        // Load notes when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotes();
+        });
 
-         function saveNote() {
-        const title = document.getElementById('noteTitle').value;
-        const content = document.getElementById('noteContent').value;
-        
-        if (!title || !content) {
-            alert('Please fill in both title and content');
-            return;
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+
+            const note = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleString()
+            };
+
+            // Get existing notes or empty array
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.push(note);
+            localStorage.setItem('notes', JSON.stringify(notes));
+
+            // Clear inputs
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+
+            loadNotes();
         }
 
-        const note = {
-            id: Date.now(),
-            title: title,
-            content: content,
-            date: new Date().toLocaleString()
-        };
-
-        // Fixed localStorage handling
-       const notes = JSON.parse(localStorage.getItem('notes')) || [];
-
-        notes.push(note);
-        localStorage.setItem('notes', JSON.stringify(notes));
-
-        // Clear inputs
-        document.getElementById('noteTitle').value = '';
-        document.getElementById('noteContent').value = '';
-
-        loadNotes();
-    }
         function loadNotes() {
             const notesContainer = document.getElementById('notesContainer');
-            const notes = JSON.parse(localStorage.getItem('notes') || []);
+            // Get notes from localStorage or empty array
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
 
             notesContainer.innerHTML = '';
 
@@ -238,7 +242,7 @@
         function deleteNote() {
             if (!currentNoteId) return;
             
-            const notes = JSON.parse(localStorage.getItem('notes') || []);
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
             const filteredNotes = notes.filter(note => note.id !== currentNoteId);
             localStorage.setItem('notes', JSON.stringify(filteredNotes));
             
