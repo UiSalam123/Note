@@ -174,32 +174,34 @@
 
         document.addEventListener('DOMContentLoaded', loadNotes);
 
-        function saveNote() {
-            const title = document.getElementById('noteTitle').value;
-            const content = document.getElementById('noteContent').value;
-            
-            if (!title || !content) {
-                alert('Please fill in both title and content');
-                return;
-            }
-
-            const note = {
-                id: Date.now(),
-                title: title,
-                content: content,
-                date: new Date().toLocaleString()
-            };
-
-            const notes = JSON.parse(localStorage.getItem('notes') || []);
-            notes.push(note);
-            localStorage.setItem('notes', JSON.stringify(notes));
-
-            document.getElementById('noteTitle').value = '';
-            document.getElementById('noteContent').value = '';
-
-            loadNotes();
+         function saveNote() {
+        const title = document.getElementById('noteTitle').value;
+        const content = document.getElementById('noteContent').value;
+        
+        if (!title || !content) {
+            alert('Please fill in both title and content');
+            return;
         }
 
+        const note = {
+            id: Date.now(),
+            title: title,
+            content: content,
+            date: new Date().toLocaleString()
+        };
+
+        // Fixed localStorage handling
+       const notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+        notes.push(note);
+        localStorage.setItem('notes', JSON.stringify(notes));
+
+        // Clear inputs
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteContent').value = '';
+
+        loadNotes();
+    }
         function loadNotes() {
             const notesContainer = document.getElementById('notesContainer');
             const notes = JSON.parse(localStorage.getItem('notes') || []);
